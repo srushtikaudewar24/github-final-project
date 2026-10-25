@@ -6,18 +6,22 @@ import CartItem from './CartItem';
 
 export default function App() {
   const [page, setPage] = useState('home');
-  const navigate = next => { setPage(next); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const navigate = next => {
+    setPage(next);
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const handleGetStarted = () => navigate('plants');
   return (
     <div className="app-shell">
       <Navbar page={page} navigate={navigate} />
       {page === 'home' && (
         <main>
-          <section className="hero" aria-label="Paradise Nursery landing page">
+          <section className="background-image hero" aria-label="Paradise Nursery landing page">
             <div className="hero-overlay">
               <p className="eyebrow">Your indoor oasis starts here</p>
-              <h1>Paradise Nursery</h1>
-              <p>Beautiful houseplants. Happier spaces. Discover your next favorite green companion.</p>
-              <button className="primary-button" onClick={() => navigate('plants')}>Get Started</button>
+              <h1>Welcome to Paradise Nursery</h1>
+              <p>Beautiful houseplants. Happier spaces. Discover your next green companion.</p>
+              <button type="button" className="get-started-button primary-button" onClick={handleGetStarted}>Get Started</button>
             </div>
           </section>
           <AboutUs />
