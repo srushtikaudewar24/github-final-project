@@ -4,7 +4,7 @@ import { addItem, selectCartItems } from './CartSlice';
 
 // Six different plants in each of THREE categories: 18 unique houseplants total.
 // Each record includes an individual thumbnail, name, description and price.
-const categories = [
+const plantsArray = [
   { name: 'Indoor Classics', description: 'Timeless leafy favorites for every home.', plants: [
     { id: 'monstera', name: 'Monstera Deliciosa', price: 34, description: 'Bold split leaves for a tropical look.', image: 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=600&auto=format&fit=crop&q=80' },
     { id: 'fiddle-leaf', name: 'Fiddle-Leaf Fig', price: 46, description: 'Sculptural, dramatic glossy foliage.', image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=600&auto=format&fit=crop&q=80' },
@@ -33,18 +33,22 @@ const categories = [
 export default function ProductList({ navigate }) {
   const dispatch = useDispatch();
   const items = useSelector(selectCartItems);
-  const inCart = new Set(items.map(item => item.id));
+  const addedToCart = Object.fromEntries(items.map(item => [item.name, true]));
+  const cartQuantity = items.reduce((total, item) => total + item.quantity, 0);
+  const handleHomeClick = () => navigate('home');
+  const handlePlantsClick = () => navigate('plants');
+  const handleCartClick = () => navigate('cart');
   return (
     <main className="content" aria-label="Plant product listing">
-      <div className="page-intro"><p className="eyebrow">The collection</p><h1>Find your perfect plant</h1><p>Browse 18 unique houseplants across three categories.</p></div>
-      {categories.map(category => (
-        <section key={category.name} className="plant-category" aria-label={category.name}>
+      <div className="product-navigation"><button onClick={handleHomeClick}>Home</button><button onClick={handlePlantsClick}>Plants</button><button onClick={handleCartClick}>🛒 Cart ({cartQuantity})</button></div><div className="page-intro"><p className="eyebrow">The collection</p><h1>Find your perfect plant</h1><p>Browse 18 unique houseplants across three categories.</p></div>
+      {plantsArray.map(category => (
+        <section key={category.name} className="plant-category product-list" aria-label={category.name}>
           <div className="section-heading"><h2>{category.name}</h2><p>{category.description}</p></div>
           <div className="product-grid">
             {category.plants.map(plant => (
               <article className="product-card" key={plant.id}>
                 <img src={plant.image} alt={plant.name} loading="lazy" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://placehold.co/600x450/e6efe3/315443?text=Paradise+Nursery'; }} />
-                <div className="product-details"><h3>{plant.name}</h3><p>{plant.description}</p><div className="product-actions"><strong>${plant.price.toFixed(2)}</strong><button type="button" className="primary-button" disabled={inCart.has(plant.id)} onClick={() => dispatch(addItem(plant))}>{inCart.has(plant.id) ? 'Added to Cart ✓' : 'Add to Cart'}</button></div></div>
+                <div className="product-details"><h3>{plant.name}</h3><p>{plant.description}</p><div className="product-actions"><strong>${plant.price.toFixed(2)}</strong><button type="button" className="primary-button" disabled={addedToCart[plant.name]} onClick={() => dispatch(addItem(plant))}>{inCart.has(plant.id) ? 'Added to Cart ✓' : 'Add to Cart'}</button></div></div>
               </article>
             ))}
           </div>
